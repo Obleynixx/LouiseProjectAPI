@@ -2,13 +2,18 @@ const express = require('express');
 const app = express();
 const { spawn } = require('child_process');
 const multer = require('multer');
+const bodyParser = require('body-parser');
 const fs = require('fs');
 const cors = require('cors');
+
+const KEY_AUTHORIZATION = 'Testing';
 
 app.use(cors({
     origin: 'http://localhost' // replace with the domain of your frontend
   }));
-
+  app.use(bodyParser.json()); // for parsing JSON data
+  app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded data
+  
 // Define storage for uploaded files
 const storage = multer.memoryStorage();
 
@@ -41,10 +46,17 @@ function saveAudioFile(audioFile) {
 const runPythonScript = (args) => {
     return spawn('python', args);
   };
-app.post('/RunLouiseAudio', upload.single('audio'), (req, res) => {
+app.post('/RunLouiseAudio', upload.fields([{ name: 'audio', maxCount: 1 }, { name: 'json', maxCount: 1 }]), (req, res) => {
     // Handle the uploaded file here
-    const audioFile = req.file;
-    // Do something with the audio file, like save it to disk or process it
+    console.log(req.body);
+    const audioFile = req.files['audio'][0];
+    const json = JSON.parse(req.body['json']); // parse the JSON data from the request body
+    const authorization = json.authorization;
+    const mood = json.mood;
+    if (authorization != KEY_AUTHORIZATION){
+      res.status(500).send('Authentication Failed!');
+      return;
+    }
     
     saveAudioFile(audioFile)
   .then(() => {
@@ -54,6 +66,7 @@ app.post('/RunLouiseAudio', upload.single('audio'), (req, res) => {
     //python script ran and created an result.txt that i will now modify
     pythonProcess.on('close', async (code) => {
     try{
+      
         if (code === 0) {
             let result = null;
             let retries = 0;
@@ -63,11 +76,15 @@ app.post('/RunLouiseAudio', upload.single('audio'), (req, res) => {
                 }
               await new Promise(resolve => setTimeout(resolve, 2000)); // wait for 2 seconds before retrying
               if (fs.existsSync('result.txt')) {
+                console.log('Transcription Done ');
                 result = fs.readFileSync('result.txt', 'utf-8');
                 const transcript = JSON.parse(result);
-                const textContent = transcript['text']['text'];
+                var textContent = transcript['text']['text'];
+                textContent+= '&'+mood;
+                console.log('user input: '+textContent);
                 //Send and receive data from ChatGPT
                 const child2 = spawn('node', ['ChatBot.js']);
+                console.log('Sending text to ChatGPT');
                 child2.stdin.setEncoding('utf-8');
                 child2.stdin.write(textContent);
                 child2.stdin.end();
@@ -93,7 +110,7 @@ app.post('/RunLouiseAudio', upload.single('audio'), (req, res) => {
                           });
                           
                           // Set the Content-Type header to the appropriate MIME type
-                          res.set('Content-Type', 'audio/mpeg');
+                          res.set('Content-Type', 'audio/mp3');
                           
                           // Send the audio data as the response body
                           res.send(data);
