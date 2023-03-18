@@ -10,7 +10,7 @@ const KEY_AUTHORIZATION = 'FaceTheWrathOfThor';
 var takeDownAPI = 0;
 
 app.use(cors({
-    origin: 'http://localhost' // replace with the domain of your frontend
+    origin: 'lemon-dune-005e83410.2.azurestaticapps.net' // replace with the domain of your frontend
   }));
   app.use(bodyParser.json()); // for parsing JSON data
   app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded data
