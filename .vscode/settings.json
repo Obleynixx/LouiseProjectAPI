@@ -8,5 +8,7 @@
     "appService.zipIgnorePattern": [
         "node_modules{,/**}",
         ".vscode{,/**}"
-    ]
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/8f0057dc-4994-4815-81ca-fe47ce27a9b3/resourceGroups/Elou/providers/Microsoft.Web/sites/crazylouise",
+    "appService.deploySubpath": "."
 }
