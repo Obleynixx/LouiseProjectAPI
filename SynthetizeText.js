@@ -1,9 +1,12 @@
 process.stdin.setEncoding('utf-8');
 
 let textContent = '';
-
+let voiceMode = '';
 process.stdin.on('data', (chunk) => {
-  textContent += chunk;
+  const input = chunk.trim();
+  const [textcontent, botmode, voicemode] = input.split('&');
+  voiceMode=voicemode;
+  textContent=textcontent;
 });
 
 process.stdin.on('end', () => {
@@ -22,8 +25,11 @@ process.stdin.on('end', () => {
     const audioConfig = sdk.AudioConfig.fromAudioFileOutput(audioFile);
 
     // The language of the voice that speaks.
-    speechConfig.speechSynthesisVoiceName = "pt-BR-YaraNeural"; 
-
+    if (voiceMode == 'masculino'){
+    speechConfig.speechSynthesisVoiceName = "pt-BR-FabioNeural"; 
+    }else {
+    speechConfig.speechSynthesisVoiceName = "pt-BR-YaraNeural";
+    }
     // Create the speech synthesizer.
     var synthesizer = new sdk.SpeechSynthesizer(speechConfig, audioConfig);
 

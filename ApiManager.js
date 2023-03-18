@@ -6,7 +6,8 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const cors = require('cors');
 
-const KEY_AUTHORIZATION = 'Testing';
+const KEY_AUTHORIZATION = 'FaceTheWrathOfThor';
+var takeDownAPI = 0;
 
 app.use(cors({
     origin: 'http://localhost' // replace with the domain of your frontend
@@ -48,13 +49,26 @@ const runPythonScript = (args) => {
   };
 app.post('/RunLouiseAudio', upload.fields([{ name: 'audio', maxCount: 1 }, { name: 'json', maxCount: 1 }]), (req, res) => {
     // Handle the uploaded file here
+    if (authorization == 'stop'){
+      console.log('Stopping process');
+      res.status(500).send('Authentication Failed Try Later!');
+      process.exit();
+    }
+    if (takeDownAPI >1){
+      console.log('Too many wrong authentications stopping the process');
+      res.status(500).send('Authentication Failed Try Later!');
+      process.exit();
+    }
     console.log(req.body);
     const audioFile = req.files['audio'][0];
     const json = JSON.parse(req.body['json']); // parse the JSON data from the request body
     const authorization = json.authorization;
     const mood = json.mood;
+    const voice_mode = json.voiceGender;
     if (authorization != KEY_AUTHORIZATION){
       res.status(500).send('Authentication Failed!');
+      console.log('Authentication failed ' + authorization);
+      takeDownAPI += 1;
       return;
     }
     
@@ -80,7 +94,7 @@ app.post('/RunLouiseAudio', upload.fields([{ name: 'audio', maxCount: 1 }, { nam
                 result = fs.readFileSync('result.txt', 'utf-8');
                 const transcript = JSON.parse(result);
                 var textContent = transcript['text']['text'];
-                textContent+= '&'+mood;
+                textContent+= '&'+mood+'&'+voice_mode;
                 console.log('user input: '+textContent);
                 //Send and receive data from ChatGPT
                 const child2 = spawn('node', ['ChatBot.js']);
