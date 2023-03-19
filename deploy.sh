@@ -5,4 +5,4 @@
 #python3 get-pip.py --user
 
 # Install requirements
-python3 -m pip install --user -r requirements.txt
+#python3 -m pip install --user -r requirements.txt
