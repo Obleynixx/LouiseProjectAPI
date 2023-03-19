@@ -34,6 +34,10 @@ const fileFilter = function (req, file, cb) {
 //Save audio file
 function saveAudioFile(audioFile) {
   return new Promise((resolve, reject) => {
+    const dir = 'Audios';
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir);
+    }
     fs.writeFile('Audios/audio.webm', audioFile.buffer, { flag: 'w', encoding: 'binary' }, function (err) {
       if (err) {
         reject(err);
@@ -51,7 +55,7 @@ const runPythonScript = (args) => {
 app.post('/RunLouiseAudio', upload.fields([{ name: 'audio', maxCount: 1 }, { name: 'json', maxCount: 1 }]), (req, res) => {
     // Handle the uploaded file here
     
-    if (takeDownAPI >1){
+    if (takeDownAPI >4){
       console.log('Too many wrong authentications stopping the process');
       res.status(500).send('Authentication Failed Try Later!');
       process.exit();
@@ -74,8 +78,7 @@ app.post('/RunLouiseAudio', upload.fields([{ name: 'audio', maxCount: 1 }, { nam
       return;
     }
     
-    saveAudioFile(audioFile)
-  .then(() => {
+    saveAudioFile(audioFile).then(() => {
     // Code that needs to wait for the file to be saved
   
     const pythonProcess = runPythonScript(['app.py']);
@@ -147,17 +150,61 @@ app.post('/RunLouiseAudio', upload.fields([{ name: 'audio', maxCount: 1 }, { nam
         }
         else 
         {
+          res.status(500).send('Something went wroooong! python exited with ' + code);
             console.error(`Python script exited with code ${code}`);
         }
     }catch (error){
+        res.status(500).send('Something went Wrong ' + error);
         console.error(error);
     }
     });
   })
   .catch((err) => {
+    res.status(500).send('Something went wroong!' + err);
     console.error(err);
   });
     
+});
+app.get('/hello', function(req, res) {
+  console.log('user said hello');
+  res.json("Hello World!");
+});
+app.post('/run',upload.fields([{ name: 'audio', maxCount: 1 }, { name: 'json', maxCount: 1 }]), function(req, res) {
+  console.log('user said hello');
+  if (takeDownAPI >4){
+    console.log('Too many wrong authentications stopping the process');
+    res.status(500).send('Authentication Failed Try Later!');
+    process.exit();
+  }
+  console.log(req.body);
+  const audioFile = req.files['audio'][0];
+  const json = JSON.parse(req.body['json']); // parse the JSON data from the request body
+  const authorization = json.authorization;
+  if (authorization == 'stop'){
+    console.log('Stopping process');
+    res.status(500).send('Authentication Failed Try Later!');
+    process.exit();
+  }
+  const mood = json.mood;
+  const voice_mode = json.voiceGender;
+  if (authorization != KEY_AUTHORIZATION){
+    res.status(500).send('Authentication Failed!');
+    console.log('Authentication failed ' + authorization);
+    takeDownAPI += 1;
+    return;
+  }
+ 
+  
+  saveAudioFile(audioFile).then(() => {
+    const pythonProcess = spawn('python', ['app.py']);
+    pythonProcess.on('close', async (code) => {
+      res.json("Hello World!");
+    });
+ 
+  }).catch((err) => {
+  res.status(500).send('Something went wroong!' + err);
+  console.error(err);
+});
 });
 
 
