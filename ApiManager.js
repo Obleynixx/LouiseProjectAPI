@@ -1,3 +1,4 @@
+var port = process.env.PORT || 8000;
 const express = require('express');
 const app = express();
 const { spawn } = require('child_process');
@@ -10,7 +11,7 @@ const KEY_AUTHORIZATION = 'FaceTheWrathOfThor';
 var takeDownAPI = 0;
 
 app.use(cors({
-    origin: 'lemon-dune-005e83410.2.azurestaticapps.net' // replace with the domain of your frontend
+    origin: 'https://lemon-dune-005e83410.2.azurestaticapps.net/' // replace with the domain of your frontend
   }));
   app.use(bodyParser.json()); // for parsing JSON data
   app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded data
@@ -49,11 +50,7 @@ const runPythonScript = (args) => {
   };
 app.post('/RunLouiseAudio', upload.fields([{ name: 'audio', maxCount: 1 }, { name: 'json', maxCount: 1 }]), (req, res) => {
     // Handle the uploaded file here
-    if (authorization == 'stop'){
-      console.log('Stopping process');
-      res.status(500).send('Authentication Failed Try Later!');
-      process.exit();
-    }
+    
     if (takeDownAPI >1){
       console.log('Too many wrong authentications stopping the process');
       res.status(500).send('Authentication Failed Try Later!');
@@ -63,6 +60,11 @@ app.post('/RunLouiseAudio', upload.fields([{ name: 'audio', maxCount: 1 }, { nam
     const audioFile = req.files['audio'][0];
     const json = JSON.parse(req.body['json']); // parse the JSON data from the request body
     const authorization = json.authorization;
+    if (authorization == 'stop'){
+      console.log('Stopping process');
+      res.status(500).send('Authentication Failed Try Later!');
+      process.exit();
+    }
     const mood = json.mood;
     const voice_mode = json.voiceGender;
     if (authorization != KEY_AUTHORIZATION){
@@ -162,6 +164,6 @@ app.post('/RunLouiseAudio', upload.fields([{ name: 'audio', maxCount: 1 }, { nam
 
 
 
-app.listen(3000, () => {
-  console.log('Server listening on port 3000');
+app.listen(port, () => {
+  console.log('Server listening on port: '+ port);
 });
