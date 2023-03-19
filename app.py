@@ -1,9 +1,10 @@
 import os
-import openai
+
 import sys
 import json
 import time
-
+sys.path.append('/python_modules')
+from python_modules import openai
 openai.api_key = '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'
 def RecognizeText():
     audio_file = open("Audios/audio.webm", "rb")
