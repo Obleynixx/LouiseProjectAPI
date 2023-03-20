@@ -17,3 +17,4 @@ def RecognizeText():
         
 if __name__ == '__main__':
     RecognizeText()
+#acho que ele não está salvando o arquivo ou lendo o audios

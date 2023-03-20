@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Page</title>
+    <style>
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f2f2f2;
+        }
+
+        body {
+            background-color: #f2f2f2;
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        p {
+            font-size: 18px;
+            line-height: 1.5;
+            color: #666;
+            margin: 20px;
+            text-align: center;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            margin-top: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+
+        .button:hover {
+            background-color: #2E8B57;
+        }
+
+        select {
+            padding: 5px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #dfdfdf;
+            color: #494949;
+        }
+
+        select:hover,
+        select:focus {
+            outline: none;
+            border-color: #66afe9;
+            box-shadow: 0 0 5px rgba(102, 175, 233, 0.5);
+        }
+
+        select option {
+            background-color: #dfdfdf;
+            color: #494949;
+        }
+
+        @media screen and (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            p {
+                font-size: 1em;
+            }
+
+            .button {
+                margin-left: auto;
+                margin-right: auto;
+                display: block;
+            }
+
+            audio {
+                display: block;
+                margin: 0 auto;
+                width: 80%;
+                background-color: #fff;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Porão da Louise</h1>
+    </header>
+    <main>
+        <div class="container">
+            <p>Fale com Louise uma IA muito educada e gentil</p>
+            <button id="record-button" class="button">Record Audio</button>
+            <audio id="recorded-audio" controls></audio>
+            <label for="password">Authentication:</label>
+            <input type="password" id="password" name="password">
+            <select id="select-mode">
+                <option value="raiva" selected>Raiva</option>
+                <option value="meiga">Meiga</option>
+                <option value="paranoica">Paranoica</option>
+                <option value="adolescente">Adolescente</option>
+                <option value="conservadora">Conservadora</option>
+                <option value="depressivo">Depressivo</option>
+                <option value="funkeira">Funkeira</option>
+                <option value="patricinha">Patricinha</option>
+                <option value="descolada">Descolada</option>
+                <option value="otaku">Otaku</option>
+                <option value="nerd">Nerd</option>
+                <option value="comunista">Comunista</option>
+                <option value="liberal">Liberal</option>
+                <option value="feminista">Feminista</option>
+                <option value="maconheira">Maconheira</option>
+                <option value="narcisista">Narcisista_M</option>
+                <option value="galanteador">Galanteador_M</option>
+            </select>
+            <select id="select-voice">
+                <option value="feminina" selected>Voz Feminina</option>
+                <option value="masculino">Voz Masculina</option>
+            </select>
+        </div>
+        <script>
+            const recordButton = document.getElementById('record-button');
+            const recordedAudio = document.getElementById('recorded-audio');
+            const chunks = [];
+            const mediaRecorderOptions = {
+                mimeType: 'audio/webm',
+                audioBitsPerSecond: 128000,
+                channelCount: 1,
+                sampleRate: 44100
+            };
+
+            recordButton.addEventListener('click', () => {
+                recordButton.style.backgroundColor = '#FF0000';
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                    .then(stream => {
+                        const mediaRecorder = new MediaRecorder(stream, mediaRecorderOptions);
+
+                        mediaRecorder.start();
+
+                        mediaRecorder.addEventListener('dataavailable', event => {
+                            chunks.push(event.data);
+                        });
+
+                        mediaRecorder.addEventListener('stop', () => {
+                            // Get the audio track from the stream
+                            const audioTrack = stream.getAudioTracks()[0];
+
+                            // Stop the audio track
+                            audioTrack.stop();
+                            //Get selected mode
+                            const selectModeElement = document.getElementById('select-mode');
+                            const selectVoiceElement = document.getElementById('select-voice');
+                            const authorizationUser = document.getElementById('password');
+                            const selectedModeValue = selectModeElement.value;
+                            const selectedVoiceValue = selectVoiceElement.value;
+                            const authorizationUserValue = authorizationUser.value;
+                            const blob = new Blob(chunks, { type: 'audio/webm' });
+                            const formData = new FormData();
+                            formData.append('audio', blob, 'recording.webm');
+                            formData.append('json', JSON.stringify({ authorization: authorizationUserValue, mood: selectedModeValue, voiceGender: selectedVoiceValue })); // JSON data
+                            fetch('/RunLouiseAudio', {
+                                method: 'POST',
+                                body: formData,
+                            }).then(response => {
+                                if (response.ok) {
+                                    return response.blob();
+                                } else {
+                                    throw new Error('Network response was not ok');
+                                }
+                            })
+                                .then(blob => {
+                                    const url = URL.createObjectURL(blob);
+                                    recordedAudio.src = url;
+                                })
+                            chunks.length = 0;
+                        });
+
+                        setTimeout(() => {
+                            mediaRecorder.stop();
+                            recordButton.style.backgroundColor = '#4CAF50';
+                        }, 5000);
+                    })
+                    .catch(error => {
+                        console.error('Error accessing microphone:', error);
+                    });
+            });
+        </script>
+    </main>
+</body>
+
+</html>

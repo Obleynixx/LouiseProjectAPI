@@ -1,18 +1,19 @@
 var port = process.env.PORT || 8000;
 const express = require('express');
 const app = express();
+const path = require('path');
 const { spawn } = require('child_process');
 const multer = require('multer');
 const bodyParser = require('body-parser');
 const fs = require('fs');
-const cors = require('cors');
 
 const KEY_AUTHORIZATION = 'FaceTheWrathOfThor';
 var takeDownAPI = 0;
-
-app.use(cors({
-    origin: 'https://lemon-dune-005e83410.2.azurestaticapps.net/' // replace with the domain of your frontend
-  }));
+//run only once
+app.use(function(req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', 'https://apilouise.azurewebsites.net');
+  next();
+});
   app.use(bodyParser.json()); // for parsing JSON data
   app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded data
   
@@ -50,11 +51,11 @@ function saveAudioFile(audioFile) {
 }
 //Python app.js(send to openai Whisper api)
 const runPythonScript = (args) => {
-    return spawn('python', args);
+    return spawn('python3', args);
   };
+app.use(express.static(path.join(__dirname, '/')));
 app.post('/RunLouiseAudio', upload.fields([{ name: 'audio', maxCount: 1 }, { name: 'json', maxCount: 1 }]), (req, res) => {
     // Handle the uploaded file here
-    
     if (takeDownAPI >4){
       console.log('Too many wrong authentications stopping the process');
       res.status(500).send('Authentication Failed Try Later!');
@@ -165,40 +166,25 @@ app.post('/RunLouiseAudio', upload.fields([{ name: 'audio', maxCount: 1 }, { nam
   });
     
 });
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
 app.get('/hello', function(req, res) {
   console.log('user said hello');
   res.json("Hello World!");
 });
 app.post('/run',upload.fields([{ name: 'audio', maxCount: 1 }, { name: 'json', maxCount: 1 }]), function(req, res) {
-  console.log('user said hello');
-  if (takeDownAPI >4){
-    console.log('Too many wrong authentications stopping the process');
-    res.status(500).send('Authentication Failed Try Later!');
-    process.exit();
-  }
-  console.log(req.body);
-  const audioFile = req.files['audio'][0];
-  const json = JSON.parse(req.body['json']); // parse the JSON data from the request body
-  const authorization = json.authorization;
-  if (authorization == 'stop'){
-    console.log('Stopping process');
-    res.status(500).send('Authentication Failed Try Later!');
-    process.exit();
-  }
-  const mood = json.mood;
-  const voice_mode = json.voiceGender;
-  if (authorization != KEY_AUTHORIZATION){
-    res.status(500).send('Authentication Failed!');
-    console.log('Authentication failed ' + authorization);
-    takeDownAPI += 1;
-    return;
-  }
  
   
   saveAudioFile(audioFile).then(() => {
-    const pythonProcess = spawn('python', ['app.py']);
+    const pythonProcess = spawn('python3', ['app.py']);
+    pythonProcess.stdin.end();
     pythonProcess.on('close', async (code) => {
       res.json("Hello World!");
+    });
+    pythonProcess.on('error', (err) => {
+      console.error('Failed to start python process', err);
+      res.status(500).send('Failed to start python process ' + err);
     });
  
   }).catch((err) => {
