@@ -114,7 +114,8 @@ app.post('/RunLouiseAudio', upload.fields([{ name: 'audio', maxCount: 1 }, { nam
                     //Send data to Microsoft Azure Cognition Service and receives a new file called YourAudioFile.mp3
                     const child = spawn('node', ['SynthetizeText.js']);
                     child.stdin.setEncoding('utf-8');
-                    child.stdin.write(data);
+                    textContent = data+'&'+'none'+'&'+voice_mode;
+                    child.stdin.write(textContent);
                     child.stdin.end();
                     child.on('close', async (code) => {
                       console.log(`Synthetize process exited with code ${code}`);
