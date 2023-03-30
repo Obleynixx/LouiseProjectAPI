@@ -200,7 +200,7 @@ app.post('/RunLouiseAudio', upload.fields([{ name: 'audio', maxCount: 1 }, { nam
 
                   // Send the audio data as the response body
                   res.send(data);
-                  deleteAudioFiles('/Audios');
+                  deleteAudioFiles('Audios');
                 }
               });
             });
