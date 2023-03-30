@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyAI</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="cookieStyle.css">
+    <link rel="stylesheet" type="text/css" href="navbar.css">
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f2f2f2;
+        }
+
+        body {
+            background-color: #f2f2f2;
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        p {
+            font-size: 18px;
+            line-height: 1.5;
+            color: #666;
+            margin: 20px;
+            text-align: center;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            margin-top: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+
+        .button:hover {
+            background-color: #2E8B57;
+        }
+
+        select {
+            padding: 5px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #dfdfdf;
+            color: #494949;
+        }
+
+        select:hover,
+        select:focus {
+            outline: none;
+            border-color: #66afe9;
+            box-shadow: 0 0 5px rgba(102, 175, 233, 0.5);
+        }
+
+        select option {
+            background-color: #dfdfdf;
+            color: #494949;
+        }
+
+        .loading-icon {
+            display: block;
+            margin: 0 auto;
+            width: 200px;
+            height: auto;
+        }
+
+        #loading.disabled {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        @media screen and (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            p {
+                font-size: 1em;
+            }
+
+            .button {
+                margin-left: auto;
+                margin-right: auto;
+                display: block;
+            }
+
+            audio {
+                display: block;
+                margin: 0 auto;
+                width: 80%;
+                background-color: #fff;
+            }
+
+            #loading.disabled {
+                opacity: 0.5;
+                pointer-events: none;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+    <div id="cookie-consent" style="display:none;">
+        <p>Eu uso cookies para não ter que ficar botando o authentication. Ao continuar nesse site, você aceita minha
+            utilização dos cookies. <button
+                id="accept-cookies">Accept</button></p>
+    </div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="navbar-container">
+            <a class="navbar-brand text-light" href="/">LouiseAI</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item active">
+                        <a class="nav-link text-light" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light" href="/study">Study Mode</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light" href="/MixSongs">Make Rap</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light" href="/about">About</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <header>
+        <h1>Estudos da Louise</h1>
+    </header>
+    <main>
+        <p>Fale com Louise uma IA muito educada e gentil</p>
+        <img id="loading" src="images/loading.gif" alt="Loading..." class="loading-icon disabled" />
+        <div class="container"><input type="file" id="audio-input" accept="audio/*" capture="audio">|Select
+            audio</input></div>
+        <div class="container">
+
+            <button id="record-button" class="button">Record Audio</button>
+            <audio id="recorded-audio" controls></audio>
+            <label for="password">Authentication:</label>
+            <input type="password" id="password" name="password">
+            <select id="select-mode">
+                <option value="raiva" selected>Raiva</option>
+                <option value="meiga">Meiga</option>
+                <option value="paranoica">Paranoica</option>
+                <option value="adolescente">Adolescente</option>
+                <option value="conservadora">Conservadora</option>
+                <option value="depressivo">Depressivo</option>
+                <option value="funkeira">Funkeira</option>
+                <option value="patricinha">Patricinha</option>
+                <option value="descolada">Descolada</option>
+                <option value="otaku">Otaku</option>
+                <option value="nerd">Nerd</option>
+                <option value="comunista">Comunista</option>
+                <option value="liberal">Liberal</option>
+                <option value="feminista">Feminista</option>
+                <option value="maconheira">Maconheira</option>
+                <option value="narcisista">Narcisista_M</option>
+                <option value="galanteador">Galanteador_M</option>
+            </select>
+            <select id="select-voice">
+                <option value="feminina" selected>Voz Feminina</option>
+                <option value="masculino">Voz Masculina</option>
+            </select>
+        </div>
+        <script src="static/js/ffmpeg.min.js"></script>
+        <script>
+            
+            const recordButton = document.getElementById('record-button');
+            const recordedAudio = document.getElementById('recorded-audio');
+            recordButton.addEventListener('click', () => {
+                sendAudio();
+            });
+
+            async function sendAudio() {
+                const ffmpeg = createFFmpeg({ log: true });
+                await ffmpeg.load();
+
+                recordButton.setAttribute('disabled', true);
+                recordButton.style.backgroundColor = '#FF0000';
+                const fileInput = document.getElementById("audio-input");
+                const file = fileInput.files[0];
+                const audioBuffer = await file.arrayBuffer();
+                await ffmpeg.FS('writeFile', audioFile.name, new Uint8Array(audioBuffer));
+
+                // run the FFmpeg command to extract the audio track and convert it to a supported audio format
+                await ffmpeg.run('-i', audioFile.name, '-vn', '-acodec', 'copy', 'output.m4a');
+
+                const outputData = await ffmpeg.FS('readFile', 'output.m4a');
+
+                const blob = new Blob([outputData.buffer], { type: 'audio/m4a' });
+                const loadingUser = document.getElementById('loading');
+                loadingUser.classList.add('disabled');
+
+                const selectModeElement = document.getElementById('select-mode');
+                const selectVoiceElement = document.getElementById('select-voice');
+                const authorizationUser = document.getElementById('password');
+
+
+                const selectedModeValue = selectModeElement.value;
+                const selectedVoiceValue = selectVoiceElement.value;
+                const authorizationUserValue = authorizationUser.value;
+                // Create a FormData object to send the audio file
+                const formData = new FormData();
+                formData.append("audio", blob);
+                formData.append('json', JSON.stringify({ authorization: authorizationUserValue, mood: selectedModeValue, voiceGender: selectedVoiceValue })); // JSON data
+
+                // Send the audio file using fetch
+                fetch('/RunLouiseAudio', {
+                    method: 'POST',
+                    body: formData,
+                }).then(response => {
+                    if (response.ok) {
+                        return response.blob();
+                    } else {
+                        throw new Error('Network response was not ok');
+                    }
+                })
+                    .then(blob => {
+                        const url = URL.createObjectURL(blob);
+                        recordedAudio.src = url;
+                    }).catch(error => {
+                        console.error(error);
+                        loadingUser.classList.add('disabled');
+                        recordButton.removeAttribute('disabled', true);
+                        recordButton.style.backgroundColor = '#4CAF50';
+                    })
+                    .finally(() => {
+                        loadingUser.classList.add('disabled');
+                        recordButton.removeAttribute('disabled', true);
+                        recordButton.style.backgroundColor = '#4CAF50';
+                    });
+                loadingUser.classList.remove('disabled');
+            }
+
+        </script>
+        <style>
+
+        </style>
+    </main>
+</body>
+
+</html>

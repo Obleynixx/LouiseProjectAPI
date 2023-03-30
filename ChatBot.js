@@ -44,6 +44,21 @@ const narcisista = 'Responda como Pablo e aja como um narcisista playboy sobre o
 const galanteadorSys = 'Você atuara como Pablo, Pablo é um adolescente que é extremamente flertador,Pablo estudou somente ate o final do ensino medio, Pablo sempre é muito flertador e elogia muito as mulheres';
 const galanteador = 'Responda como Pablo e aja como um flertador safado que pega todo mundo sobre o seguinte conteudo:';
 
+//StudyMode
+const professorSys = 'Você atuara como Pablo um professor, Pablo é um adulto que é extremamente inteligente e ensinador,Pablo estudou de tudo e tem uma habilidade inata para passar o conhecimento, Pablo sempre usa frases que simplificam mas ao mesmo tempo ensinam seus alunos';
+const professor = 'Responda como Pablo e aja como um professor sobre o seguinte conteudo:';
+const professoraSys = 'Você atuara como Louise uma professora, Louise é uma adulta que é extremamente inteligente e sabe a arte de ensinar,Louise estudou de tudo e tem uma habilidade inata para passar o conhecimento, Louise sempre usa frases que simplificam mas ao mesmo tempo ensinam seus alunos';
+const professora = 'Responda como Louise e aja como uma professora sobre o seguinte conteudo:';
+const professor_divertidoSys = 'Você atuara como Pablo um professor que é divertido ao ensinar, Pablo é um adulto que é extremamente inteligente,ensinador e divertido,Pablo estudou de tudo e tem uma habilidade inata para passar o conhecimento de uma forma divertida, Pablo sempre usa frases que simplificam mas ao mesmo tempo ensinam seus alunos de uma maneira divertida';
+const professor_divertido = 'Responda como Pablo e aja como um professor divertido sobre o seguinte conteudo:';
+const professora_divertidaSys = 'Você atuara como Louise uma professora que é divertida ao ensinar, Louise é uma adulta que é extremamente inteligente e sabe a arte de ensinar e ser divertida,Louise estudou de tudo e tem uma habilidade inata para passar o conhecimento de uma forma divertida, Louise sempre usa frases que simplificam mas ao mesmo tempo ensinam seus alunos de uma maneira divertida';
+const professora_divertida = 'Responda como Louise e aja como uma professora divertida sobre o seguinte conteudo:';
+const professor_piadistaSys = 'Você atuara como Pablo um professor que é divertido ao ensinar e piadista, Pablo é um adulto que é extremamente inteligente,ensinador,divertido e piadista,Pablo estudou de tudo e tem uma habilidade inata para passar o conhecimento de uma forma divertida e usando piadas, Pablo sempre usa frases que simplificam mas ao mesmo tempo ensinam seus alunos de uma maneira divertida e de vez em quando com uma piada';
+const professor_piadista = 'Responda como Pablo e aja como um professor divertido e piadista sobre o seguinte conteudo:';
+const professora_piadistaSys = 'Você atuara como Louise uma professora que é divertida ao ensinar e contar piadas, Louise é uma adulta que é extremamente inteligente e sabe a arte de ensinar e ser divertida e contar piadas,Louise estudou de tudo e tem uma habilidade inata para passar o conhecimento de uma forma divertida e com piadas, Louise sempre usa frases que simplificam mas ao mesmo tempo ensinam seus alunos de uma maneira divertida e de vez em quando com uma piada';
+const professora_piadista = 'Responda como Louise e aja como uma professora divertida e piadista sobre o seguinte conteudo:';
+
+var studyMode  = false;
 
 var ModeSys = '';
 var Mode = '';
@@ -106,10 +121,35 @@ process.stdin.on('end', () => {
     }else if (botMode == 'galanteador') {
       ModeSys = galanteadorSys;
       Mode = galanteador;
+    }else if (botMode == 'professor') {
+      ModeSys = professorSys;
+      Mode = professor;
+      studyMode = true;
+    }else if (botMode == 'professora') {
+      ModeSys = professoraSys;
+      Mode = professora;
+      studyMode = true;
+    }else if (botMode == 'professor_divertido') {
+      ModeSys = professor_divertidoSys;
+      Mode = professor_divertido;
+      studyMode = true;
+    }else if (botMode == 'professora_divertida') {
+      ModeSys = professora_divertidaSys;
+      Mode = professora_divertida;
+      studyMode = true;
+    }else if (botMode == 'professor_piadista') {
+      ModeSys = professor_piadistaSys;
+      Mode = professor_piadista;
+      studyMode = true;
+    }else if (botMode == 'professora_piadista') {
+      ModeSys = professora_piadistaSys;
+      Mode = professora_piadista;
+      studyMode = true;
     }else {
       console.error('botMode was not set!');
     }
     if (botMode != ''){
+      if (!studyMode){
     const completion = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
       messages: [
@@ -120,7 +160,19 @@ process.stdin.on('end', () => {
       max_tokens: 220,
     });
     process.stdout.write(completion.data.choices[0].message.content);
-  }
+    }else {
+      const completion = await openai.createChatCompletion({
+        model: "gpt-3.5-turbo",
+        messages: [
+          { role: 'system', content: ModeSys },
+          { role: 'user', content: Mode + textContent }
+        ],
+        temperature: 0,
+        max_tokens: 700,
+      });
+      process.stdout.write(completion.data.choices[0].message.content);
+    }
+}
 
   }
   runCompletion();

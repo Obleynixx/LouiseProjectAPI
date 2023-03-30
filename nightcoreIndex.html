@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LouiseAI</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="cookieStyle.css">
+    <link rel="stylesheet" type="text/css" href="navbar.css">
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <style>
+        /*Slider styling*/
+        input[type="range"] {
+            width: 100%;
+            height: 10px;
+            border-radius: 5px;
+            background-color: #ddd;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #007bff;
+            cursor: pointer;
+            -webkit-transition: background-color 0.15s ease-in-out;
+            transition: background-color 0.15s ease-in-out;
+        }
+
+        input[type="range"]:focus::-webkit-slider-thumb {
+            box-shadow: 0px 0px 0px 3px rgba(0, 123, 255, 0.25);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border: 0;
+            border-radius: 50%;
+            background-color: #007bff;
+            cursor: pointer;
+            transition: background-color 0.15s ease-in-out;
+        }
+
+        input[type="range"]::-ms-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #007bff;
+            cursor: pointer;
+            transition: background-color 0.15s ease-in-out;
+        }
+
+        /* Adjust Bootstrap styles for slider */
+        .form-control-range:focus {
+            box-shadow: none;
+        }
+
+        .form-control-range::-moz-focus-outer {
+            border: 0;
+        }
+
+        /* General Styles */
+        body {
+            background-color: #262625;
+            /* Updated background color */
+            font-family: Arial, sans-serif;
+        }
+
+        .audio-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            /* Added margin-bottom to space it from the form elements */
+        }
+
+        /* Spacing between form elements */
+        .form-group {
+            margin-bottom: 15px;
+            /* Reduced margin-bottom to space form elements closer */
+        }
+
+
+
+        h1 {
+            color: #A6A6A6;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        p {
+            font-size: 18px;
+            line-height: 1.5;
+            color: #d4d4d4;
+            margin: 20px;
+            text-align: center;
+        }
+
+        .siteIntroduction {
+            color: #585858;
+        }
+
+        /* Container Styles */
+        .container {
+            background-color: #737372;
+            border-radius: 0.5em;
+            position: relative;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .container .btn {
+            background-color: #4CAF50;
+            color: #fff;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .container .btn:hover {
+            background-color: #2E8B57;
+        }
+
+        .container select {
+            padding: 5px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #dfdfdf;
+            color: #494949;
+        }
+
+        .container select:hover,
+        .container select:focus {
+            outline: none;
+            border-color: #66afe9;
+            box-shadow: 0 0 5px rgba(102, 175, 233, 0.5);
+        }
+
+        .container select option {
+            background-color: #8C8C8C;
+            color: #494949;
+        }
+
+        .loading-icon {
+            display: block;
+            margin: 0 auto;
+            width: 200px;
+            height: auto;
+        }
+
+        #loading.disabled {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Media Queries */
+        @media screen and (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            p {
+                font-size: 1em;
+            }
+
+            .container .btn {
+                margin-left: auto;
+                margin-right: auto;
+                display: block;
+            }
+
+            audio {
+                display: block;
+                margin: 0 auto;
+                width: 80%;
+                background-color: #fff;
+            }
+
+            .disabled {
+                opacity: 0.5;
+                pointer-events: none;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+    <!-- Navigation bar -->
+    <div id="cookie-consent" style="display:none;">
+        <p>I use cookies to save your config, by continuing in this site you allow me to save cookies in your browser.
+            <button id="accept-cookies">Accept</button>
+        </p>
+    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="navbar-container">
+            <a class="navbar-brand text-light" href="/">LouiseAI</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item active">
+                        <a class="nav-link text-light" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light" href="/study">Study Mode</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light" href="/MixSongs">Make Rap</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-light" href="/about">About</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <header>
+        <h1>Louise IA</h1>
+    </header>
+    <main>
+        <p class="siteIntroduction">Fale com Louise uma IA muito educada e gentil</p>
+        <img id="loading" src="images/loading.gif" alt="Loading..." class="loading-icon disabled" />
+        <div class="container">
+            <div>
+                <input type="file" id="songInput" accept=".mp3">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Authentication:</label>
+                <input type="password" id="password" name="password" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="slider">Speed:</label>
+                <input type="range" id="sliderSpeed" name="slider" min="0.5" max="2" value="1.25" step="0.01">
+                <span id="sliderValueSpeed">1.25</span>
+            </div>
+            <div class="form-group">
+                <label for="slider">Pitch:</label>
+                <input type="range" id="sliderPitch" name="slider" min="1" max="1.5" value="1.25" step="0.01">
+                <span id="sliderValuePitch">1.25</span>
+            </div>
+            <div class="audio-wrapper">
+                <audio id="recorded-audio" controls></audio>
+            </div>
+            <button id="record-button" class="btn">Nightcore IT!</button>
+        </div>
+        <script>
+            const recordButton = document.getElementById('record-button');
+            const yourSong = document.getElementById('recorded-audio');
+            var songInput = document.getElementById("songInput");
+            var songFile;
+            songInput.addEventListener("change", function () {
+                var file = songInput.files[0];
+                if (file.type === "audio/mpeg"||file.type === 'audio/mp3') {
+                    songFile = file;
+
+                } else {
+                    alert("Please select an MP3 file.");
+                    songInput.value = "";
+                }
+            });
+
+            recordButton.addEventListener('click', () => {
+                if (songFile === null) {
+                    alert("Please select an MP3 file.");
+                    return;
+                }
+                recordButton.setAttribute('disabled', true);
+                recordButton.style.backgroundColor = '#FF0000';
+
+                const loadingUser = document.getElementById('loading');
+                loadingUser.classList.add('disabled');
+                const speedValue = document.getElementById('sliderSpeed').value;
+                const pitchValue = document.getElementById('sliderPitch').value;
+                const authorizationUserValue = document.getElementById('password').value;
+                console.log('reached here');
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const blob2 = new Blob([event.target.result], { type: songFile.type });
+                    const formData = new FormData();
+                    formData.append('audio', blob2, 'song.mp3');
+                    formData.append('json', JSON.stringify({ authorization: authorizationUserValue, speed: speedValue, pitch: pitchValue })); // JSON data
+
+                    fetch('/NightcoreIT', {
+                        method: 'POST',
+                        body: formData,
+                    }).then(response => {
+                        if (response.ok) {
+                            return response.blob();
+                        } else {
+                            throw new Error(`Network response was not ok: ${response.status} ${response.statusText}`);
+                        }
+                    })
+                        .then(blob => {
+                            const url = URL.createObjectURL(blob);
+                            yourSong.src = url;
+                        }).catch(error => {
+                            console.error(error);
+                            loadingUser.classList.add('disabled');
+                            recordButton.removeAttribute('disabled', true);
+                        })
+                        .finally(() => {
+                            loadingUser.classList.add('disabled');
+                            recordButton.removeAttribute('disabled', true);
+                        });
+                    loadingUser.classList.remove('disabled');
+                }
+                reader.readAsArrayBuffer(songFile);
+            });
+        </script>
+        <script>
+            var speedSlider = document.getElementById("sliderSpeed");
+            var speedSliderValue = document.getElementById("sliderValueSpeed");
+
+            speedSlider.oninput = function () {
+                speedSliderValue.innerHTML = this.value;
+            }
+            var pitchSlider = document.getElementById("sliderPitch");
+            var pitchSliderValue = document.getElementById("sliderValuePitch");
+
+            pitchSlider.oninput = function () {
+                pitchSliderValue.innerHTML = this.value;
+            }
+        </script>
+    </main>
+    <script>function setCookie(name, value, days) {
+            let date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            let expires = "expires=" + date.toUTCString();
+            document.cookie = name + "=" + value + ";" + expires + ";path=/";
+        }
+
+        function getCookie(name) {
+            let cookieName = name + "=";
+            let decodedCookie = decodeURIComponent(document.cookie);
+            let cookieArray = decodedCookie.split(';');
+            for (let i = 0; i < cookieArray.length; i++) {
+                let c = cookieArray[i];
+                while (c.charAt(0) === ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(cookieName) === 0) {
+                    return c.substring(cookieName.length, c.length);
+                }
+            }
+            return "";
+        }
+
+        function checkCookieConsent() {
+            let consent = getCookie("consent");
+            if (consent !== "") {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function showCookieConsent() {
+            let consentDiv = document.getElementById("cookie-consent");
+            if (!checkCookieConsent()) {
+                consentDiv.style.display = "block";
+            }
+        }
+
+        function saveAuthorization() {
+            let password = document.getElementById("password");
+            setCookie("authorization", password.value, 30);
+        }
+
+        function loadAuthorization() {
+            let password = document.getElementById("password");
+            let authorization = getCookie("authorization");
+            if (authorization) {
+                password.value = authorization;
+            }
+        }
+
+        // On page load
+        document.addEventListener("DOMContentLoaded", function () {
+            showCookieConsent();
+            loadAuthorization();
+
+            // Handle cookie consent button
+            let acceptCookies = document.getElementById("accept-cookies");
+            acceptCookies.addEventListener("click", function () {
+                setCookie("consent", "accepted", 30);
+                document.getElementById("cookie-consent").style.display = "none";
+            });
+
+            // Save authorization cookie on input change
+            let password = document.getElementById("password");
+            password.addEventListener("input", saveAuthorization);
+        });</script>
+
+</body>
+
+</html>

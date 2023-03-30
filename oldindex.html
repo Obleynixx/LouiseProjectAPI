@@ -3,7 +3,37 @@
 
 <head>
     <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Page</title>
+    <title>LouiseAI</title>
+    <style>
+        /* Style the navigation bar */
+        .navbar {
+            overflow: hidden;
+            background-color: #333;
+            font-family: Arial;
+        }
+
+        /* Style the links inside the navigation bar */
+        .navbar a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        /* Change the color of links on hover */
+        .navbar a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        /* Add a background color to the active/current link */
+        .active {
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
     <style>
         .container {
             max-width: 960px;
@@ -69,6 +99,18 @@
             color: #494949;
         }
 
+        .loading-icon {
+            display: block;
+            margin: 0 auto;
+            width: 200px;
+            height: auto;
+        }
+
+        #loading.disabled {
+            opacity: 0;
+            pointer-events: none;
+        }
+
         @media screen and (max-width: 600px) {
             h1 {
                 font-size: 2em;
@@ -90,17 +132,31 @@
                 width: 80%;
                 background-color: #fff;
             }
+
+            .disabled {
+                opacity: 0.5;
+                pointer-events: none;
+            }
+
         }
     </style>
 </head>
 
 <body>
+    <!-- Navigation bar -->
+	<div class="navbar">
+		<a class="active" href="/">LouiseAI</a>
+		<a href="/study">Study Mode</a>
+        <a href="/MixSongs">Make Rap</a>
+        <a href="/about">About</a>
+	</div>
     <header>
         <h1>Porão da Louise</h1>
     </header>
     <main>
+        <p>Fale com Louise uma IA muito educada e gentil</p>
+        <img id="loading" src="images/loading.gif" alt="Loading..." class="loading-icon disabled" />
         <div class="container">
-            <p>Fale com Louise uma IA muito educada e gentil</p>
             <button id="record-button" class="button">Record Audio</button>
             <audio id="recorded-audio" controls></audio>
             <label for="password">Authentication:</label>
@@ -141,6 +197,7 @@
             };
 
             recordButton.addEventListener('click', () => {
+                recordButton.setAttribute('disabled', true);
                 recordButton.style.backgroundColor = '#FF0000';
                 navigator.mediaDevices.getUserMedia({ audio: true })
                     .then(stream => {
@@ -159,9 +216,14 @@
                             // Stop the audio track
                             audioTrack.stop();
                             //Get selected mode
+                            const loadingUser = document.getElementById('loading');
+                            loadingUser.classList.add('disabled');
+
                             const selectModeElement = document.getElementById('select-mode');
                             const selectVoiceElement = document.getElementById('select-voice');
                             const authorizationUser = document.getElementById('password');
+
+
                             const selectedModeValue = selectModeElement.value;
                             const selectedVoiceValue = selectVoiceElement.value;
                             const authorizationUserValue = authorizationUser.value;
@@ -169,6 +231,7 @@
                             const formData = new FormData();
                             formData.append('audio', blob, 'recording.webm');
                             formData.append('json', JSON.stringify({ authorization: authorizationUserValue, mood: selectedModeValue, voiceGender: selectedVoiceValue })); // JSON data
+
                             fetch('/RunLouiseAudio', {
                                 method: 'POST',
                                 body: formData,
@@ -182,9 +245,21 @@
                                 .then(blob => {
                                     const url = URL.createObjectURL(blob);
                                     recordedAudio.src = url;
+                                }).catch(error => {
+                                    console.error(error);
+                                    loadingUser.classList.add('disabled');
+                                    recordButton.removeAttribute('disabled', true);
                                 })
+                                .finally(() => {
+                                    loadingUser.classList.add('disabled');
+                                    recordButton.removeAttribute('disabled', true);
+                                });
+                            loadingUser.classList.remove('disabled');
+
                             chunks.length = 0;
-                        });
+                        })
+
+
 
                         setTimeout(() => {
                             mediaRecorder.stop();
@@ -196,6 +271,9 @@
                     });
             });
         </script>
+        <style>
+
+        </style>
     </main>
 </body>
 
