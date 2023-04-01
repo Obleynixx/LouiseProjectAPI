@@ -88,6 +88,9 @@ function deleteAudioFiles(dirr) {
       } else {
         const unlinkPromises = [];
         for (const file of files) {
+          if (file.toLowerCase() === 'readme.txt') {
+            continue;
+          }
           const filePath = path.join(dirr, file);
           unlinkPromises.push(fs.promises.unlink(filePath));
         }
@@ -321,6 +324,7 @@ app.post('/NightcoreIT', upload.fields([{ name: 'audio', maxCount: 1 }, { name: 
         // Send the audio data as the response body
         res.send(data);
         deleteAudioFiles('LouiseNightcore/Audio');
+        deleteAudioFiles('LouiseNightcore/Output');
       }
     });
   });

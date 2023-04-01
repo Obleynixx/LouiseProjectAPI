@@ -4,9 +4,9 @@ const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 
 const inputPath = path.resolve('LouiseNightcore/Audio/audio.mp3'); // Replace with your input file path
 const outputPath = path.resolve('LouiseNightcore/Output/nightcore.mp3'); // Replace with your output file path
-
-var speed = 1.05; // Adjust speed (range: 0.5 - 2.0)
-var pitch = 1.2; // Adjust pitch (recommended range: 1.0 - 1.5)
+let speed = '';// Adjust speed (range: 0.5 - 2.0)
+let pitch = ''; // Adjust pitch (recommended range: 1.0 - 1.5)
+process.stdin.setEncoding('utf-8');
 
 process.stdin.on('data', (chunk) => {
   const input = chunk.toString().trim();
@@ -16,7 +16,7 @@ process.stdin.on('data', (chunk) => {
 });
 // Set the path to the FFmpeg executable if necessary
 // ffmpeg.setFfmpegPath('path/to/your/ffmpeg');
-
+process.stdin.on('end', () => {
 // Set the path to the FFmpeg executable
 ffmpeg.setFfmpegPath(ffmpegPath);
 
@@ -39,4 +39,4 @@ ffmpeg(inputPath)
 
 
  
-  
+})
