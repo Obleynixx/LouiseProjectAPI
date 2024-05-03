@@ -16,7 +16,7 @@ process.stdin.on('end', () => {
     const fs = require('fs')
     var sdk = require("microsoft-cognitiveservices-speech-sdk");
     var readline = require("readline");
-    var key = '496cd2faca1346e19be3b6135014ac6f';
+    var key = '';
     var region = 'brazilsouth';
 
     var audioFile = "YourAudioFile.mp3";
