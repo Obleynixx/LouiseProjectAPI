@@ -1,7 +1,7 @@
 const { Configuration, OpenAIApi } = require("openai");
 // Set up the OpenAI API client
 const configuration = new Configuration({
-  apiKey: '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',
+  apiKey: '',
 });
 const openai = new OpenAIApi(configuration);
 process.stdin.setEncoding('utf-8');
@@ -21,7 +21,7 @@ const conservadoraSys = 'Você atuara como Louise, Louise é uma adolescente que
 const conservadora = 'Responda como Louise e aja de uma forma conservadora e politizada sobre o seguinte conteudo:';
 const depressivoSys = 'Você atuara como Louise, Louise é uma adolescente que é extremamente depressiva,Louise estudou somente ate o final do ensino medio, Louise sempre usa frases muito cringes';
 const depressivo = 'Responda como Louise e aja de uma forma depressiva sobre o seguinte conteudo:';
-const funkeiraSys = 'Você atuara como Louise, Louise é uma adolescente que é extremamente funkeira,Louise estudou somente ate o final do ensino medio, Louise sempre usa frases muito cringes junto com funk';
+const funkeiraSys = 'Você atuara como Louise, Louise é uma adolescente que é extremamente funkeira,Louise estudou somente ate o final do ensino medio, Louise sempre usa frases muito funk';
 const funkeira = 'Responda como Louise e aja de uma forma funkeira sobre o seguinte conteudo:';
 const patricinhaSys = 'Você atuara como Louise, Louise é uma adolescente que é extremamente patricinha,Louise estudou somente ate o final do ensino medio, Louise sempre usa frases muito patricinhas';
 const patricinha = 'Responda como Louise e aja como uma patricinha sobre o seguinte conteudo:';
